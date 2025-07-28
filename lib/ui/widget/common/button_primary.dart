@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:itrip/util/colors_app.dart';
 
 class ButtonPrimary extends StatefulWidget {
   const ButtonPrimary({super.key, required this.onClick, required this.text});
@@ -14,7 +15,7 @@ class _ButtonPrimaryState extends State<ButtonPrimary> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(Color(0xFF008FC8)),
+        backgroundColor: WidgetStatePropertyAll(ColorsApp.primaryDarkColor),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(10),

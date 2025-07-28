@@ -43,7 +43,25 @@ class _ITripState extends State<ITrip> {
             '/home': (context) => const HomeView(),
           },
           navigatorKey: Constants.navigatorKey,
-          theme: ThemeData(primaryColor: ColorsApp.primaryColor),
+          theme: ThemeData(
+            brightness: Brightness.light,
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: ColorsApp.primaryDarkColor,
+              selectionColor: ColorsApp.primaryColor,
+              selectionHandleColor: ColorsApp.primaryDarkColor,
+            ),
+            primaryColor: ColorsApp.primaryColor,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: ColorsApp.primaryDarkColor,
+              selectionColor: ColorsApp.primaryColor.withOpacity(0.5),
+              selectionHandleColor: ColorsApp.primaryDarkColor,
+            ),
+            primaryColor: ColorsApp.primaryColor,
+          ),
+          // ThemeData(primaryColor: ColorsApp.primaryColor),
           home: SplashView(),
         ),
       ),

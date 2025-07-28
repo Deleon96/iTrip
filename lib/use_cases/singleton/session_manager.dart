@@ -32,4 +32,36 @@ class SessionManager {
   String? getToken() {
     return _box?.get("token");
   }
+
+  Future<void> setName(String name) async {
+    await _box?.put('name', name);
+  }
+
+  String? getName() {
+    return _box?.get("name");
+  }
+
+  Future<void> setPhotoUrl(String photoUrl) async {
+    await _box?.put('photoUrl', photoUrl);
+  }
+
+  String? getPhotoUrl() {
+    return _box?.get("photoUrl");
+  }
+
+  Future<void> setEmail(String email) async {
+    await _box?.put('email', email);
+  }
+
+  String? getEmail() {
+    return _box?.get("email");
+  }
+
+  Future<void> setRole(String role) async {
+    await _box?.put('role', role);
+  }
+
+  String? getRole() {
+    return _box?.get("role");
+  }
 }

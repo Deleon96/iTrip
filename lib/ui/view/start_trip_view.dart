@@ -1,32 +1,48 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:itrip/ui/view/start_trip_view.dart';
 import 'package:itrip/ui/widget/common/app_bar_primary.dart';
 import 'package:itrip/ui/widget/common/button_primary.dart';
-import 'package:itrip/use_cases/singleton/session_manager.dart';
+import 'package:itrip/ui/widget/common/text_field_primary.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class StartTripView extends StatefulWidget {
+  const StartTripView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<StartTripView> createState() => _StartTripViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _StartTripViewState extends State<StartTripView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarPrimary(context: context),
+      appBar: AppBarPrimary(context: context, showBack: true),
       body: Stack(
         children: [
-          Center(
+          Padding(
+            padding: const EdgeInsets.all(24),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(SessionManager.getInstance().getName() ?? ""),
-                Text(SessionManager.getInstance().getEmail() ?? ""),
-                Text(SessionManager.getInstance().getRole() ?? ""),
-                Image.network(SessionManager.getInstance().getPhotoUrl() ?? ""),
+                Text(
+                  "Iniciar Paseo 🏖️",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Información Basica",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                TextFieldPrimary(labelText: "Nombre de la aventura"),
+                const SizedBox(height: 16),
+                TextFieldPrimary(
+                  labelText: "Descripcion de tu recorrido",
+                  maxLines: 5,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "¿Como es tu paseo en ésta ocasion?",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),

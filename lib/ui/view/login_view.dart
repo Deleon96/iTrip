@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:itrip/ui/widget/common/button_primary.dart';
 import 'package:itrip/ui/widget/common/colored_safe_area.dart';
+import 'package:itrip/ui/widget/common/text_field_primary.dart';
 import 'package:itrip/ui/widget/login/header_arc.dart';
 import 'package:itrip/use_cases/bloc/login_bloc/login_bloc.dart';
 import 'package:itrip/util/colors_app.dart';
+import 'package:itrip/util/validator.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -18,6 +19,8 @@ class _LoginViewState extends State<LoginView> {
   final GlobalKey<FormState> _keyForm = GlobalKey<FormState>();
   final TextEditingController _ctrlEmail = TextEditingController();
   final TextEditingController _ctrlPassword = TextEditingController();
+  final Validator _validator = Validator();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,62 +67,23 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          TextFormField(
+                          TextFieldPrimary(
+                            labelText: "Correo Electronico",
                             controller: _ctrlEmail,
                             autofillHints: [AutofillHints.newUsername],
-                            decoration: InputDecoration(
-                              // hintText: "Correo Electronico",
-                              labelText: "Correo Electronico",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                            ),
+                            obscureText: false,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
-                            validator: (v) {
-                              if (v != null && v.isNotEmpty) {
-                                if (RegExp(
-                                  r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                                ).hasMatch(v)) {
-                                  return null;
-                                } else {
-                                  return "El correo electronico no es valido";
-                                }
-                              } else {
-                                return "Debes ingresar un correo electronico";
-                              }
-                            },
+                            validator: _validator.validateEmail,
                           ),
                           const SizedBox(height: 16),
-                          TextFormField(
+                          TextFieldPrimary(
+                            labelText: "Contraseña",
                             controller: _ctrlPassword,
-                            autofillHints: [AutofillHints.newPassword],
-                            decoration: InputDecoration(
-                              labelText: "Contraseña",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                            ),
-                            textInputAction: TextInputAction.done,
+                            autofillHints: [AutofillHints.password],
                             obscureText: true,
-                            validator: (v) {
-                              if (v != null && v.isNotEmpty) {
-                                if (v.length >= 6) {
-                                  return null;
-                                  // if (RegExp(
-                                  //   r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$",
-                                  // ).hasMatch(v)) {
-                                  //   return null;
-                                  // } else {
-                                  //   return "La contraseña debe tener al menos una mayuscula, una minuscula y un numero";
-                                  // }
-                                } else {
-                                  return "La contraseña debe tener al menos 6 caracteres";
-                                }
-                              } else {
-                                return "Debes ingresar tu contraseña";
-                              }
-                            },
+                            textInputAction: TextInputAction.done,
+                            validator: _validator.validatePassword,
                           ),
                           const SizedBox(height: 16),
                           SizedBox(
