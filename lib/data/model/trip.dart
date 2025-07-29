@@ -5,22 +5,22 @@ Trip tripFromJson(String str) => Trip.fromJson(json.decode(str));
 String tripToJson(Trip data) => json.encode(data.toJson());
 
 class Trip {
-  int id;
+  int? id;
   String name;
   String description;
   String companied;
-  String fotoPath;
-  double latitude;
-  double longitude;
+  String? photoPath;
+  double? latitude;
+  double? longitude;
 
   Trip({
-    required this.id,
+    this.id,
     required this.name,
     required this.description,
     required this.companied,
-    required this.fotoPath,
-    required this.latitude,
-    required this.longitude,
+    this.photoPath,
+    this.latitude,
+    this.longitude,
   });
 
   factory Trip.fromJson(Map<String, dynamic> json) => Trip(
@@ -28,7 +28,7 @@ class Trip {
     name: json["name"],
     description: json["description"],
     companied: json["companied"],
-    fotoPath: json["fotoPath"],
+    photoPath: json["photoPath"],
     latitude: json["latitude"]?.toDouble(),
     longitude: json["longitude"]?.toDouble(),
   );
@@ -38,7 +38,7 @@ class Trip {
     "name": name,
     "description": description,
     "companied": companied,
-    "fotoPath": fotoPath,
+    "photoPath": photoPath,
     "latitude": latitude,
     "longitude": longitude,
   };

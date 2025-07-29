@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:itrip/data/db/db_helper.dart';
+import 'package:itrip/data/db/table/trip_dao.dart';
+import 'package:itrip/data/model/trip.dart';
 import 'package:itrip/ui/view/start_trip_view.dart';
 import 'package:itrip/ui/widget/common/app_bar_primary.dart';
 import 'package:itrip/ui/widget/common/button_primary.dart';
@@ -14,19 +17,45 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   @override
+  void initState() {
+    Future.delayed(Duration.zero, () async {
+      List<Trip> list = await TripDao.getAll(await DbHelper.getDb());
+      print(list.map((t) => t.toJson()));
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarPrimary(context: context),
       body: Stack(
         children: [
-          Center(
+          Padding(
+            padding: const EdgeInsets.all(24.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(SessionManager.getInstance().getName() ?? ""),
-                Text(SessionManager.getInstance().getEmail() ?? ""),
-                Text(SessionManager.getInstance().getRole() ?? ""),
-                Image.network(SessionManager.getInstance().getPhotoUrl() ?? ""),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "¡Hola ${SessionManager.getInstance().getName()}! 👋",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    ClipRRect(
+                      borderRadius: BorderRadiusGeometry.circular(100.0),
+                      child: Image.network(
+                        SessionManager.getInstance().getPhotoUrl() ?? "",
+                        width: 64,
+                        height: 64,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

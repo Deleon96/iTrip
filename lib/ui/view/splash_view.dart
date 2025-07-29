@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:itrip/use_cases/singleton/session_manager.dart';
 import 'package:itrip/util/colors_app.dart';
 import 'package:itrip/util/constants.dart';
+import 'package:itrip/util/extension/permissions_app.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -12,6 +13,7 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView> {
   Future<void> startApp() async {
+    await PermissionsApp.requestPermission();
     await Future.delayed(Duration(seconds: 2));
     bool savedSession =
         SessionManager.getInstance().getToken() != null &&

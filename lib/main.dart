@@ -4,6 +4,7 @@ import 'package:itrip/ui/view/home_view.dart';
 import 'package:itrip/ui/view/login_view.dart';
 import 'package:itrip/ui/view/splash_view.dart';
 import 'package:itrip/use_cases/bloc/login_bloc/login_bloc.dart';
+import 'package:itrip/use_cases/bloc/trip_bloc/trip_bloc.dart';
 import 'package:itrip/use_cases/singleton/session_manager.dart';
 import 'package:itrip/util/colors_app.dart';
 import 'package:itrip/util/constants.dart';
@@ -35,7 +36,10 @@ class _ITripState extends State<ITrip> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: MultiBlocProvider(
-        providers: [BlocProvider(create: (context) => LoginBloc())],
+        providers: [
+          BlocProvider(create: (context) => LoginBloc()),
+          BlocProvider(create: (context) => TripBloc()),
+        ],
         child: MaterialApp(
           title: "iTrip",
           routes: {

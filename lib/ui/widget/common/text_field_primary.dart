@@ -62,6 +62,7 @@ class _TextFieldPrimaryState extends State<TextFieldPrimary> {
       decoration: InputDecoration(
         labelText: widget.labelText,
         labelStyle: TextStyle(color: _focusColor),
+        alignLabelWithHint: true,
         // floatingLabelStyle: TextStyle(color: ColorsApp.primaryDarkColor),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
         focusedBorder: OutlineInputBorder(
@@ -69,6 +70,7 @@ class _TextFieldPrimaryState extends State<TextFieldPrimary> {
           borderSide: BorderSide(color: ColorsApp.primaryColor, width: 2.0),
         ),
       ),
+      obscureText: widget.obscureText,
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       validator: (v) {
