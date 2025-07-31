@@ -1,71 +1,67 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:itrip/data/model/trip.dart';
 import 'package:itrip/ui/widget/common/app_bar_primary.dart';
 import 'package:itrip/ui/widget/common/button_link.dart';
-import 'package:itrip/ui/widget/common/button_primary.dart';
+import 'package:itrip/ui/widget/common/theme_helper.dart';
 import 'package:itrip/use_cases/bloc/trip_bloc/trip_bloc.dart';
-import 'package:itrip/util/constants.dart';
 
-class RecordTripView extends StatefulWidget {
+class DetailTripView extends StatefulWidget {
   final Trip trip;
-  const RecordTripView({super.key, required this.trip});
+  const DetailTripView({super.key, required this.trip});
 
   @override
-  State<RecordTripView> createState() => _RecordTripViewState();
+  State<DetailTripView> createState() => _DetailTripViewState();
 }
 
-class _RecordTripViewState extends State<RecordTripView> {
-  final ValueNotifier<Position?> _position = ValueNotifier(null);
+class _DetailTripViewState extends State<DetailTripView> {
+  final ValueNotifier<Set<Marker>> _marker = ValueNotifier({});
+  String _mapStyleDarkMode = "";
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-  final CameraPosition _cameraPosition = CameraPosition(
+  final CameraPosition _initialPosition = CameraPosition(
     target: LatLng(13.7012837, -89.2244333),
     zoom: 15,
   );
 
-  Future<void> getCurrentLocation() async {
-    _position.value = await Geolocator.getCurrentPosition();
-    moveCamera();
-  }
-
-  void currentLocationLive() {
-    final LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 100,
+  void addTripMarker() {
+    _marker.value.add(
+      Marker(
+        markerId: MarkerId(widget.trip.id.toString()),
+        position: LatLng(widget.trip.latitude ?? 0, widget.trip.longitude ?? 0),
+      ),
     );
-    StreamSubscription<Position> positionStream =
-        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
-          (Position? position) async {
-            _position.value = position;
-            moveCamera();
-          },
-        );
+    // _marker.notifyListeners();
   }
 
-  Future<void> moveCamera() async {
+  Future<void> moveCameraToMarker() async {
     GoogleMapController gMapCtrl = await _controller.future;
     gMapCtrl.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
-          target: LatLng(
-            _position.value?.latitude ?? 0,
-            _position.value?.longitude ?? 0,
-          ),
+          target: LatLng(widget.trip.latitude ?? 0, widget.trip.longitude ?? 0),
           zoom: 15.0,
         ),
       ),
     );
   }
 
+  Future<void> loadDarkStyle() async {
+    _mapStyleDarkMode = await rootBundle.loadString(
+      "asset/maps/dark_mode.json",
+    );
+  }
+
   @override
   void initState() {
     Future.delayed(Duration.zero, () async {
-      currentLocationLive();
+      loadDarkStyle();
+      addTripMarker();
+      moveCameraToMarker();
     });
     super.initState();
   }
@@ -73,27 +69,45 @@ class _RecordTripViewState extends State<RecordTripView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarPrimary(context: context),
+      appBar: AppBarPrimary(context: context, showBack: true),
       body: SafeArea(
         child: BlocListener<TripBloc, TripState>(
           listener: (context, state) {
             if (state is TripUpdatedState) {
-              BlocProvider.of<TripBloc>(context).add(LoadTripsEvent());
               Navigator.pop(context);
             }
           },
           child: ValueListenableBuilder(
-            valueListenable: _position,
+            valueListenable: _marker,
             builder: (BuildContext context, value, Widget? child) {
               return Column(
                 children: [
                   Expanded(
                     child: GoogleMap(
-                      mapType: MapType.hybrid,
-                      initialCameraPosition: _cameraPosition,
+                      // mapType: MapType.hybrid,
+                      initialCameraPosition: _initialPosition,
                       myLocationEnabled: true,
+                      style: ThemeHelper.darkModeActive(context: context)
+                          ? _mapStyleDarkMode
+                          : null,
                       onMapCreated: (GoogleMapController controller) {
                         _controller.complete(controller);
+                      },
+                      markers: {
+                        Marker(
+                          markerId: MarkerId(widget.trip.id.toString()),
+                          position: LatLng(
+                            widget.trip.latitude ?? 0,
+                            widget.trip.longitude ?? 0,
+                          ),
+                          infoWindow: InfoWindow(
+                            title: widget.trip.name,
+                            snippet: widget.trip.description,
+                          ),
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueAzure,
+                          ),
+                        ),
                       },
                     ),
                   ),
@@ -118,23 +132,6 @@ class _RecordTripViewState extends State<RecordTripView> {
                                 ),
                               ],
                             ),
-                            SizedBox(
-                              width: MediaQuery.sizeOf(context).width,
-                              child: ButtonPrimary(
-                                onClick: () async {
-                                  await getCurrentLocation();
-                                  BlocProvider.of<TripBloc>(
-                                    Constants.navigatorKey.currentContext!,
-                                  ).add(
-                                    UpdateTripEvent(
-                                      latitude: _position.value!.latitude,
-                                      longitude: _position.value!.longitude,
-                                    ),
-                                  );
-                                },
-                                text: "Capturar Momento",
-                              ),
-                            ),
                             Spacer(),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
@@ -145,7 +142,7 @@ class _RecordTripViewState extends State<RecordTripView> {
                                   onClick: () {
                                     Navigator.pop(context);
                                   },
-                                  text: "Finalizar",
+                                  text: "Volver",
                                 ),
                               ),
                             ),
@@ -159,12 +156,6 @@ class _RecordTripViewState extends State<RecordTripView> {
             },
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.my_location),
-        onPressed: () {
-          getCurrentLocation();
-        },
       ),
     );
   }

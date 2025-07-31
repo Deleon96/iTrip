@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:itrip/main.dart';
 import 'package:itrip/util/colors_app.dart';
 
 class ButtonLink extends StatefulWidget {

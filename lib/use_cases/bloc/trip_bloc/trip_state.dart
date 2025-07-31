@@ -24,3 +24,8 @@ final class TripStartedState extends TripState {
 final class TripUpdatedState extends TripState {}
 
 final class TripEndedState extends TripState {}
+
+final class TripListState extends TripState {
+  final List<Trip> tripList;
+  const TripListState({required this.tripList});
+}

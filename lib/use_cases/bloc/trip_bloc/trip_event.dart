@@ -18,3 +18,12 @@ final class StartTripEvent extends TripEvent {
     required this.personStatusValue,
   });
 }
+
+final class UpdateTripEvent extends TripEvent {
+  final double latitude;
+  final double longitude;
+
+  UpdateTripEvent({required this.latitude, required this.longitude});
+}
+
+final class LoadTripsEvent extends TripEvent {}

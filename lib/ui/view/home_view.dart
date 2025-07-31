@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:itrip/data/db/db_helper.dart';
-import 'package:itrip/data/db/table/trip_dao.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:itrip/data/model/trip.dart';
 import 'package:itrip/ui/view/start_trip_view.dart';
 import 'package:itrip/ui/widget/common/app_bar_primary.dart';
 import 'package:itrip/ui/widget/common/button_primary.dart';
+import 'package:itrip/ui/widget/home/trip_card_portrait.dart';
+import 'package:itrip/use_cases/bloc/trip_bloc/trip_bloc.dart';
 import 'package:itrip/use_cases/singleton/session_manager.dart';
 
 class HomeView extends StatefulWidget {
@@ -19,8 +20,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     Future.delayed(Duration.zero, () async {
-      List<Trip> list = await TripDao.getAll(await DbHelper.getDb());
-      print(list.map((t) => t.toJson()));
+      BlocProvider.of<TripBloc>(context).add(LoadTripsEvent());
     });
     super.initState();
   }
@@ -55,6 +55,27 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 16),
+                BlocBuilder<TripBloc, TripState>(
+                  builder: (context, state) {
+                    List<Trip> tripList = BlocProvider.of<TripBloc>(
+                      context,
+                    ).tripList;
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: tripList
+                            .map(
+                              (t) => Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: TripCardPortrait(trip: t),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

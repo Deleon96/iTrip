@@ -49,10 +49,6 @@ class TripDao {
   }
 
   static Future<int> delete(Database db, int id) async {
-    return await db.delete(
-      tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete(tableName, where: 'id = ?', whereArgs: [id]);
   }
 }
